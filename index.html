@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AutoClass</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="shortcut icon"
+      href="./imgs/icon-no-bg.png"
+      type="image/x-icon"
+    />
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <img src="./imgs/icon-no-bg.png" alt="" />
+      <h1>Personalized Timetable Generator</h1>
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <div id="pdf-div">
+        <div class="input-group general">
+          <label for="timetable-pdf"
+            >general timetable pdf:
+            <input
+              type="file"
+              id="timetable-pdf"
+              placeholder="click here to upload"
+              accept="application/pdf"
+              required
+            />
+          </label>
+        </div>
+        <!-- <hr> -->
+        <div class="input-group courses">
+          <label for="courses-pdf"
+            >course registration pdf:
+            <input
+              type="file"
+              id="courses-pdf"
+              accept="application/pdf"
+              required
+            />
+          </label>
+        </div>
+      </div>
+      <!-- ******************************************************************** -->
+      <div id="rename-div">
+        <div class="input-group" id="rname">
+          <label for="filename">Rename Your Timetable:</label>
+          <input type="text" id="filename" value="MyTimetable" required />
+        </div>
+
+        <button onclick="processFiles()">Generate Timetable</button>
+        <button onclick="debugProcessPDFs()">Debug with Sample PDFs</button>
+        <div id="loading">Processing...</div>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
