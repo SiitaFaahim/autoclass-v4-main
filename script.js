@@ -12,12 +12,20 @@ async function processFiles() {
         const coursesData = processCourses(coursesText);
         const matchedCourses = matchCourses(timetableData, coursesData);
 
-        if (!matchedCourses.length) {
-            throw new Error("No matching courses found. Check your input files.");
+        if (!matchedCourses || !matchedCourses.length) {
+            alert("No matching courses found. Please check your input files or the console for details on extracted data.");
+            const displayDiv = document.getElementById('timetable-display');
+            if (displayDiv) displayDiv.innerHTML = ''; // Clear old table
+            loading.style.display = 'none'; // Hide loading
+            return; // Exit if no courses
         }
 
-        const pdfBytes = await generatePDF(matchedCourses);
-        downloadPDF(pdfBytes, document.getElementById('filename').value);
+        const groupedCourses = groupCoursesByDay(matchedCourses);
+        displayTimetableAsHTML(groupedCourses); // New function to display HTML
+
+        // PDF generation and download are removed as per requirements
+        // const pdfBytes = await generatePDF(matchedCourses);
+        // downloadPDF(pdfBytes, document.getElementById('filename').value);
     } catch (error) {
         alert(`Error: ${error.message}`);
         console.error(error);
@@ -51,12 +59,43 @@ async function parsePDF(elementId) {
 
 function processTimetable(text) {
     console.log("Processing Timetable with text: ", text);
-    const courseRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+(?:Lec\s\d+\s)?(\d{1,2}:\d{2}[ap]?m?[ -]+[\d{1,2}:\d{2}[ap]?m?)/gi;
-    const matches = [...text.matchAll(courseRegex)];
-    console.log("Timetable regex matches: ", matches);
-    const processedEntries = matches.map(match => ({ code: match[1].replace(/\s+/g, ' ').trim(), time: normalizeTime(match[2]) }));
-    console.log("Processed timetable entries: ", processedEntries);
-    return processedEntries;
+    const lines = text.split('\n'); // Split by newlines, assuming PDF text has them
+    const courses = [];
+    let currentDay = "Unknown"; // Default day
+
+    // Regex for Day of the Week (simple match)
+    const dayRegex = /^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)$/i;
+
+    // Regex for course details - this will need the most adjustment
+    // Example: SOE 322 Software Quality Engineering 10:00am-12:00pm NHA1
+    // Or: EEE 121 Circuit Theory I 2:00pm - 5:00pm CCT 2
+    // This regex attempts to capture these parts. It's complex and will likely need refinement.
+    const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)\s+([A-Za-z0-9\/-]+)/i;
+    // Groups: 1: Code, 2: Name, 3: Time, 4: Hall
+
+
+    lines.forEach(line => {
+        const dayMatch = line.trim().match(dayRegex);
+        if (dayMatch) {
+            currentDay = dayMatch[1].toUpperCase(); // Standardize to uppercase
+            console.log(`Identified day: ${currentDay}`);
+        } else {
+            const courseMatch = line.match(courseDetailRegex);
+            if (courseMatch) {
+                console.log("Course regex match on line: ", line, courseMatch);
+                courses.push({
+                    day: currentDay,
+                    code: courseMatch[1].replace(/\s+/g, ' ').trim(),
+                    name: courseMatch[2].trim(), // This will likely grab too much or too little initially
+                    time: normalizeTime(courseMatch[3].trim()), // Assuming normalizeTime still works
+                    hall: courseMatch[4].trim()
+                });
+            }
+        }
+    });
+
+    console.log("Processed timetable entries (enhanced): ", courses);
+    return courses;
 }
 
 function processCourses(text) {
@@ -143,8 +182,83 @@ function normalizeTime(timeStr) {
     return finalStr;
 }
 
+function parseStartTimeForSorting(timeString) {
+    const startTimePart = timeString.split('-')[0].trim(); // "10:00 AM" or "2:30 PM"
+    const timeMatch = startTimePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!timeMatch) return 0; // Should not happen with normalizedTime
+
+    let hours = parseInt(timeMatch[1]);
+    const minutes = parseInt(timeMatch[2]);
+    const ampm = timeMatch[3].toUpperCase();
+
+    if (ampm === 'PM' && hours < 12) hours += 12;
+    if (ampm === 'AM' && hours === 12) hours = 0; // Midnight case
+
+    return hours * 60 + minutes;
+}
+
+function groupCoursesByDay(matchedCourses) {
+    const groupedByDay = {};
+    matchedCourses.forEach(course => {
+        if (!groupedByDay[course.day]) {
+            groupedByDay[course.day] = [];
+        }
+        groupedByDay[course.day].push(course);
+    });
+
+    for (const day in groupedByDay) {
+        groupedByDay[day].sort((a, b) => parseStartTimeForSorting(a.time) - parseStartTimeForSorting(b.time));
+    }
+    console.log("Grouped and sorted courses by day: ", groupedByDay);
+    return groupedByDay;
+}
+
+function displayTimetableAsHTML(groupedCourses) {
+    const displayDiv = document.getElementById('timetable-display');
+    displayDiv.innerHTML = ''; // Clear previous content
+    const table = document.createElement('table');
+    table.classList.add('timetable-table');
+
+    const dayOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY", "Unknown"];
+
+    dayOrder.forEach(day => {
+        if (groupedCourses[day] && groupedCourses[day].length > 0) {
+            const dayHead = table.createTHead(); // Create a new thead for each day section
+            const dayRow = dayHead.insertRow();
+            const dayCell = dayRow.insertCell();
+            dayCell.colSpan = 4; // Span across all columns
+            dayCell.textContent = day;
+            dayCell.classList.add('day-header');
+
+            const headerRow = dayHead.insertRow(); // Header for course details
+            ['Time', 'Course Code', 'Course Name', 'Lecture Hall'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+
+            const tbody = document.createElement('tbody');
+            groupedCourses[day].forEach(course => {
+                const row = tbody.insertRow();
+                row.insertCell().textContent = course.time;
+                row.insertCell().textContent = course.code;
+                row.insertCell().textContent = course.name;
+                row.insertCell().textContent = course.hall;
+            });
+            table.appendChild(tbody);
+        }
+    });
+
+    displayDiv.appendChild(table);
+}
+
 function matchCourses(timetable, courses) {
     console.log("Matching courses with timetable: ", timetable, "and courses: ", courses);
+    if (timetable.length > 0) {
+        console.log("First timetable entry in matchCourses:", timetable[0]);
+    } else {
+        console.log("matchCourses received an empty timetable array.");
+    }
     const courseSet = new Set(courses);
     console.log("Course set for matching: ", courseSet);
     const matched = timetable.filter(entry => courseSet.has(entry.code))
@@ -214,24 +328,33 @@ async function debugProcessPDFs() {
         console.log("Parsing courses PDF...");
         const coursesText = await parsePDFArrayBuffer(coursesArrayBuffer, '300 st.pdf');
         
-        console.log("Processing timetable text...");
-        const timetableData = processTimetable(timetableText);
-        console.log("Processing courses text...");
+        console.log("Processing timetable text (debug)...");
+        const timetableData = processTimetable(timetableText); // Uses new processTimetable
+        console.log("Processing courses text (debug)...");
         const coursesData = processCourses(coursesText);
-        
-        console.log("Matching courses...");
+
+        console.log("Matching courses (debug)...");
         const matchedCourses = matchCourses(timetableData, coursesData);
 
-        if (!matchedCourses.length) {
-            console.warn("Debug: No matching courses found.");
-            alert("Debug: No matching courses found. Check console for details.");
-        } else {
-            console.log("Debug: Matched courses found: ", matchedCourses);
-            // Optionally, generate and download the PDF
-            // const pdfBytes = await generatePDF(matchedCourses);
-            // downloadPDF(pdfBytes, "DebugTimetable");
-            alert("Debug: Processing complete. Check console for detailed logs.");
+        if (!matchedCourses || !matchedCourses.length) {
+            console.warn("Debug: No matching courses found from sample PDFs.");
+            alert("Debug: No matching courses found. Check console for details on extracted data.");
+            const displayDiv = document.getElementById('timetable-display');
+            if (displayDiv) displayDiv.innerHTML = ''; // Clear old table
+            loading.style.display = 'none'; // Hide loading
+            return; // Exit if no courses
         }
+        console.log("Debug: Matched courses found: ", matchedCourses);
+
+        const groupedCourses = groupCoursesByDay(matchedCourses);
+        console.log("Debug: Grouped courses: ", groupedCourses);
+
+        displayTimetableAsHTML(groupedCourses);
+        alert("Debug: HTML Timetable processing complete. Check the page and console for detailed logs.");
+
+        // PDF generation and download are removed as per requirements
+        // const pdfBytes = await generatePDF(matchedCourses);
+        // downloadPDF(pdfBytes, "DebugTimetable");
 
     } catch (error) {
         alert(`Debug Error: ${error.message}`);

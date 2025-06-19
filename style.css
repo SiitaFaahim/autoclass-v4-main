@@ -241,3 +241,83 @@ img {
         width: 100%;
     }
 }
+
+/* Timetable Styles */
+.timetable-table {
+    width: 100%; /* Or a specific max-width with auto margins */
+    margin: 1.5rem auto;
+    border-collapse: collapse;
+    border: 1px solid #ddd; /* Light border for the table */
+    font-family: montserrat, helvetica; /* Ensure font inheritance */
+}
+
+.timetable-table .day-header { /* Targeting the td with this class, as per JS */
+    background-color: #f0f0f0; /* Light grey background for day headers */
+    color: #333;
+    padding: 10px;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+    border-bottom: 2px solid #ccc;
+}
+
+/* Styling for the cells containing Time, Course Code etc. headers */
+.timetable-table th {
+    background-color: #f7f7f7; /* Slightly different background for column headers */
+    color: #333;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-weight: 600; /* Bolder than normal text */
+}
+
+.timetable-table td {
+    padding: 8px 10px;
+    border: 1px solid #eee; /* Lighter border for individual cells */
+    text-align: left;
+    font-size: 0.95em;
+}
+
+/* Zebra striping for rows in tbody for better readability (optional) */
+.timetable-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+.timetable-table tbody tr:hover {
+    background-color: #f1f1f1; /* Highlight on hover */
+}
+
+/* Ensure the table is responsive */
+@media screen and (max-width: 768px) {
+    .timetable-table th,
+    .timetable-table td {
+        font-size: 0.9em; /* Smaller font on smaller screens */
+        padding: 6px 8px;
+    }
+
+    .timetable-table .day-header {
+        font-size: 1em;
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Potentially more aggressive styling for very small screens if needed,
+       like stacking rows or horizontal scrolling.
+       For now, just adjusting font and padding further. */
+    .timetable-table {
+        display: block; /* Allows horizontal scrolling if content overflows */
+        overflow-x: auto;
+        white-space: nowrap; /* Prevents text wrapping that might break layout */
+    }
+    .timetable-table th,
+    .timetable-table td {
+        font-size: 0.85em;
+        padding: 5px;
+        white-space: normal; /* Allow wrapping inside cells again */
+    }
+    .timetable-table .day-header {
+       font-size: 0.95em;
+       white-space: normal;
+    }
+}
