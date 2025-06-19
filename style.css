@@ -1,117 +1,74 @@
-/* Small screens (phones) */
-@media screen and (max-width: 480px) {
-    body {
-        width: 90vw;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 0.5rem;
-        overflow-x: hidden;
-    }
-
-    .container {
-        width: 100%;
-        margin: 0;
-        padding: 1rem;
-        box-shadow: none;
-    }
-
-    #pdf-div {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 0.5rem;
-        align-items: center;
-    }
-
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    img {
-        width: 60px;
-    }
-
-    .courses,
-    .general {
-        width: fit-content;
-        padding: 0.5rem;
-        /* border: solid; */
-    }
-
-    input[type='file'] {
-        width: 100%;
-    }
-
-    #rname input {
-        width: 100%;
-    }
-
-    label {
-        font-size: 16px;
-    }
-
-    #pdf-div label {
-        font-size: 14px;
-    }
-
-    button {
-        width: 100%;
-        font-size: 16px;
-        padding: 0.8rem;
-    }
-}
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
 * {
     font-family: montserrat, helvetica;
+    box-sizing: border-box; /* Add box-sizing for easier layout management */
 }
 
 body {
-    width: 99vw;
-    height: 99vh;
+    width: 100%; /* Mobile first: full width */
+    min-height: 100vh; /* Ensure body takes at least full viewport height */
+    height: auto; /* Allow content to define height */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Global style, keep */
     background-color: #0e0e0e0a;
-
+    padding: 0.5rem; /* From mobile */
+    overflow-x: hidden; /* From mobile */
+    margin: 0; /* Common reset */
 }
 
 .container {
-    border: solid 1px #9c9c9c;
-    background-color: #fefefefe;
-    width: 600px;
-    margin: 2rem auto;
-    padding: 20px;
-    border-radius: 2px;
-    box-shadow: 0 0 15px #9c9c9c9c;
-    display: flex;
-    flex-direction: column;
+    border: solid 1px #9c9c9c; /* Global style */
+    background-color: #fefefefe; /* Global style */
+    width: 100%; /* Mobile first */
+    margin: 1rem 0; /* Mobile: adjusted from 0 or 2rem auto */
+    padding: 1rem; /* Mobile */
+    border-radius: 2px; /* Global style */
+    box-shadow: none; /* Mobile */
+    display: flex; /* Global style */
+    flex-direction: column; /* Global style */
 }
 
 h1 {
-    text-align: center;
+    text-align: center; /* Global style */
+    font-size: 1.2rem; /* Mobile */
 }
 
+/* General label style from mobile, global label had larger font */
 label {
-    display: block;
-    margin-bottom: 0.5rem;
+    display: block; /* Global style */
+    margin-bottom: 0.5rem; /* Global style */
+    font-size: 16px; /* Mobile */
+    font-weight: 500; /* From global more specific label */
+    text-align: center; /* From global more specific label */
 }
 
 #loading {
-    display: none;
-    color: #666;
-    margin-top: 1rem;
+    display: none; /* Global style */
+    color: #666; /* Global style */
+    margin-top: 1rem; /* Global style */
 }
 
 #pdf-div {
-    border: dashed 2px #0e0e0e1f;
-    padding: 1rem;
+    border: dashed 2px #0e0e0e1f; /* Global style */
+    padding: 0.5rem; /* Mobile */
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    flex-direction: column; /* Mobile */
+    gap: 1rem; /* Mobile & Global had 1rem */
+    margin-bottom: 1rem; /* Global style */
+    align-items: center; /* Mobile */
+}
+
+/* Specific label style for #pdf-div from mobile */
+#pdf-div label {
+    font-size: 14px; /* Mobile */
+    font-weight: 500; /* From global #pdf-div label */
+    text-align: center; /* From global #pdf-div label */
+    display: flex; /* From global #pdf-div label */
+    flex-direction: column; /* From global #pdf-div label */
+    justify-content: center; /* From global #pdf-div label */
+    align-items: center; /* From global #pdf-div label */
+    gap: 10px; /* From global #pdf-div label */
 }
 
 .courses,
@@ -121,203 +78,284 @@ label {
     justify-content: center;
     text-align: justify;
     align-items: center;
-    width: fit-content;
-    border-left: solid 3px rgba(255, 0, 0, 0.623);
-    border-radius: 4px;
-    gap: 1rem;
-    padding: .8rem;
-    background-color: #f07d7d1e;
+    width: 100%; /* Changed from fit-content for better mobile full-width sections */
+    border-left: solid 3px rgba(255, 0, 0, 0.623); /* Global style */
+    border-radius: 4px; /* Global style */
+    gap: 1rem; /* Global style */
+    padding: 0.5rem; /* Mobile (Global was .8rem) */
+    background-color: #f07d7d1e; /* Global style */
 }
 
 input[type='file'] {
-    display: flex;
-    border: solid 1px #0e0e0e33;
-    font-weight: 490;
-    background-color: #fefefe63;
-    font-style: italic;
-    width: 70%;
-    height: fit-content;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 10px;
-
+    display: flex; /* Global style */
+    border: solid 1px #0e0e0e33; /* Global style */
+    font-weight: 490; /* Global style */
+    background-color: #fefefefe63; /* Global style */
+    font-style: italic; /* Global style */
+    width: 100%; /* Mobile (Global was 70%) */
+    height: fit-content; /* Global style */
+    flex-direction: column; /* Global style */
+    justify-content: center; /* Global style */
+    align-items: center; /* Global style */
+    text-align: center; /* Global style */
+    padding: 10px; /* Global style */
 }
 
 input[type='file']::-webkit-file-upload-button {
-    display: none;
-}
-
-#pdf-div label {
-    font-size: 16px;
-    font-weight: 500;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-label {
-    font-size: 18px;
-    font-weight: 500;
-    text-align: center;
+    display: none; /* Global style */
 }
 
 #rename-div {
-    border: solid 1px rgba(77, 77, 77, 0.151);
-    display: flex;
-    background-color: #8a89890a;
-    flex-direction: column;
-    gap: 1rem;
-    /* align-items: center; */
-    justify-content: center;
-    padding: 1rem;
+    border: solid 1px rgba(77, 77, 77, 0.151); /* Global style */
+    display: flex; /* Global style */
+    background-color: #8a89890a; /* Global style */
+    flex-direction: column; /* Global style */
+    gap: 1rem; /* Global style */
+    justify-content: center; /* Global style */
+    padding: 1rem; /* Global style */
 }
 
 #rname {
-    /* border: solid 1px; */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: flex; /* Global style */
+    flex-direction: column; /* Global style */
+    justify-content: center; /* Global style */
+    align-items: center; /* Global style */
 }
 
 #rname input {
-    width: 96%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #fefefe63;
-    border: solid 1px #0e0e0e33;
+    width: 100%; /* Mobile (Global was 96%) */
+    padding: 10px; /* Global style */
+    font-size: 16px; /* Global style */
+    background-color: #fefefefe63; /* Global style */
+    border: solid 1px #0e0e0e33; /* Global style */
 }
 
 button {
-    padding: .5rem;
-    font-size: 18px;
-    font-weight: 500;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 0, 0, 0.623);
-    color: #fff;
-    background-color: rgba(255, 0, 0, 0.623);
+    width: 100%; /* Mobile */
+    padding: 0.8rem; /* Mobile (Global was .5rem) */
+    font-size: 16px; /* Mobile (Global was 18px) */
+    font-weight: 500; /* Global style */
+    border-radius: 4px; /* Global style */
+    border: 1px solid rgba(255, 0, 0, 0.623); /* Global style */
+    color: #fff; /* Global style */
+    background-color: rgba(255, 0, 0, 0.623); /* Global style */
 }
 
 img {
-    width: 100px;
-    height: auto;
-    align-self: center;
+    width: 60px; /* Mobile (Global was 100px) */
+    height: auto; /* Global style */
+    align-self: center; /* Global style */
 }
 
-/* Medium screens (tablets) */
-@media screen and (max-width: 768px) {
-    body {
-        height: auto;
-        min-height: 100vh;
-    }
+/* Timetable Styles - Mobile First */
+.timetable-table {
+    width: 100%; /* Global style */
+    margin: 1.5rem auto; /* Global style */
+    border-collapse: collapse; /* Global style */
+    border: 1px solid #ddd; /* Global style */
+    font-family: montserrat, helvetica; /* Global style - already in * but keep for specificity if needed */
+    display: block; /* Mobile - for horizontal scrolling */
+    overflow-x: auto; /* Mobile - for horizontal scrolling */
+    white-space: nowrap; /* Mobile - prevent wrapping that breaks layout */
+}
 
+.timetable-table .day-header {
+    background-color: #f0f0f0; /* Global style */
+    color: #333; /* Global style */
+    padding: 8px; /* Mobile (Global was 10px, tablet was 8px) - taking smaller one for mobile */
+    text-align: center; /* Global style */
+    font-size: 0.95em; /* Mobile (Global was 1.1em, tablet 1em) */
+    font-weight: bold; /* Global style */
+    border-bottom: 2px solid #ccc; /* Global style */
+    white-space: normal; /* Mobile - allow wrapping inside header */
+}
+
+.timetable-table th {
+    background-color: #f7f7f7; /* Global style */
+    color: #333; /* Global style */
+    padding: 5px; /* Mobile (Global was 10px, tablet 6px 8px) */
+    text-align: left; /* Global style */
+    border-bottom: 1px solid #ddd; /* Global style */
+    font-weight: 600; /* Global style */
+    font-size: 0.85em; /* Mobile (Global was 0.95em, tablet 0.9em) */
+    white-space: normal; /* Mobile - allow wrapping inside cells */
+}
+
+.timetable-table td {
+    padding: 5px; /* Mobile (Global was 8px 10px, tablet 6px 8px) */
+    border: 1px solid #eee; /* Global style */
+    text-align: left; /* Global style */
+    font-size: 0.85em; /* Mobile (Global was 0.95em, tablet 0.9em) */
+    white-space: normal; /* Mobile - allow wrapping inside cells */
+}
+
+.timetable-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Global style */
+}
+
+.timetable-table tbody tr:hover {
+    background-color: #f1f1f1; /* Global style */
+}
+
+/* End of base (mobile-first) styles */
+
+
+/* ~~~~~~~~~~~~~~~~~ Tablet Styles ~~~~~~~~~~~~~~~~~ */
+@media screen and (min-width: 601px) {
     .container {
         width: 90%;
-        margin: 1rem auto;
-        padding: 15px;
+        margin: 2rem auto; /* Original global had 2rem auto, mobile has 1rem 0 */
+        padding: 20px; /* Original global had 20px, mobile 1rem */
+        /* Consider re-adding box-shadow if appropriate for tablets */
+        /* box-shadow: 0 0 10px rgba(0,0,0,0.1); */
     }
 
     h1 {
-        font-size: 24px;
+        font-size: 24px; /* From old 768px query */
     }
 
     #pdf-div {
-        flex-direction: column;
-        gap: 1.5rem;
+        /* Reverting to row layout for tablets, similar to original desktop */
+        flex-direction: row;
+        gap: 1.5rem; /* From old 768px query */
+        padding: 1rem; /* Original global padding */
     }
 
     .courses,
     .general {
-        width: 100%;
-        margin: 0 auto;
+        /* If they were 100% on mobile, they might not need to be 100% on tablet,
+           or could have a max-width. For now, let's try making them less than full width */
+        width: 48%; /* Example: two column layout if they are side-by-side */
+        margin: 0.5rem 0; /* Adjust margin as needed */
+    }
+
+    /* If #pdf-div becomes a row, .courses and .general might need to adjust alignment if they were centered vertically */
+    /* .courses, .general { align-items: flex-start; } */
+
+    input[type='file'] {
+        width: 70%; /* Reverting to original global width */
+    }
+
+    #rname input {
+        width: 96%; /* Reverting to original global width */
     }
 
     button {
-        width: 100%;
-    }
-}
-
-/* Timetable Styles */
-.timetable-table {
-    width: 100%; /* Or a specific max-width with auto margins */
-    margin: 1.5rem auto;
-    border-collapse: collapse;
-    border: 1px solid #ddd; /* Light border for the table */
-    font-family: montserrat, helvetica; /* Ensure font inheritance */
-}
-
-.timetable-table .day-header { /* Targeting the td with this class, as per JS */
-    background-color: #f0f0f0; /* Light grey background for day headers */
-    color: #333;
-    padding: 10px;
-    text-align: center;
-    font-size: 1.1em;
-    font-weight: bold;
-    border-bottom: 2px solid #ccc;
-}
-
-/* Styling for the cells containing Time, Course Code etc. headers */
-.timetable-table th {
-    background-color: #f7f7f7; /* Slightly different background for column headers */
-    color: #333;
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-weight: 600; /* Bolder than normal text */
-}
-
-.timetable-table td {
-    padding: 8px 10px;
-    border: 1px solid #eee; /* Lighter border for individual cells */
-    text-align: left;
-    font-size: 0.95em;
-}
-
-/* Zebra striping for rows in tbody for better readability (optional) */
-.timetable-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
-}
-
-.timetable-table tbody tr:hover {
-    background-color: #f1f1f1; /* Highlight on hover */
-}
-
-/* Ensure the table is responsive */
-@media screen and (max-width: 768px) {
-    .timetable-table th,
-    .timetable-table td {
-        font-size: 0.9em; /* Smaller font on smaller screens */
-        padding: 6px 8px;
+        /* Mobile set width to 100%, padding 0.8rem, font-size 16px */
+        /* Original global was padding .5rem, font-size 18px, no width (auto) */
+        /* For tablet, perhaps a fixed width or revert to auto? */
+        width: auto; /* Revert to auto width */
+        padding: .5rem 1.5rem; /* Adjust padding */
+        font-size: 17px; /* Slightly larger than mobile */
     }
 
-    .timetable-table .day-header {
-        font-size: 1em;
-        padding: 8px;
+    img {
+        width: 80px; /* Slightly larger than mobile's 60px */
     }
-}
 
-@media screen and (max-width: 480px) {
-    /* Potentially more aggressive styling for very small screens if needed,
-       like stacking rows or horizontal scrolling.
-       For now, just adjusting font and padding further. */
+    /* Timetable adjustments for tablets */
     .timetable-table {
-        display: block; /* Allows horizontal scrolling if content overflows */
-        overflow-x: auto;
-        white-space: nowrap; /* Prevents text wrapping that might break layout */
+        display: table; /* Revert from block to standard table display */
+        overflow-x: initial; /* Revert from auto */
+        white-space: normal; /* Revert from nowrap */
+        /* width: 90%; /* Optional: if container is 90%, table might be 100% of that or a bit less */
+        /* margin: 1.5rem auto; /* Already in base */
     }
+
     .timetable-table th,
     .timetable-table td {
-        font-size: 0.85em;
-        padding: 5px;
-        white-space: normal; /* Allow wrapping inside cells again */
+        font-size: 0.9em; /* From old 768px query */
+        padding: 6px 8px; /* From old 768px query */
     }
+
     .timetable-table .day-header {
-       font-size: 0.95em;
-       white-space: normal;
+        font-size: 1em; /* From old 768px query */
+        /* padding: 8px; /* Base mobile is 8px, no change needed unless desired */
+    }
+}
+
+/* ~~~~~~~~~~~~~~~~~ Desktop Styles ~~~~~~~~~~~~~~~~~ */
+@media screen and (min-width: 992px) {
+    body {
+        /* Base mobile has padding: 0.5rem; For desktop, we might want less or different body padding */
+        padding: 1rem; /* Example: slightly more padding around the content area */
+    }
+
+    .container {
+        width: 600px; /* Original global width, suitable for desktop */
+        margin: 2rem auto; /* Original global margin */
+        padding: 20px; /* Original global padding */
+        box-shadow: 0 0 15px #9c9c9c9c; /* Original global box-shadow */
+    }
+
+    h1 {
+        /* Tablet is 24px, mobile 1.2rem. Original global h1 had no font-size, so it was browser default. */
+        /* Let's make it a bit larger for desktop. */
+        font-size: 1.8rem; /* Approx 28.8px if 1rem=16px */
+    }
+
+    label {
+        /* Base is 16px. For desktop, revert to original global label size if it was different/larger */
+        /* Original more specific label (not #pdf-div label) was font-size: 18px; */
+        font-size: 18px;
+    }
+
+    #pdf-div {
+        /* Tablet already set to flex-direction: row and gap: 1.5rem. This should be fine. */
+        /* We can adjust padding or gap if needed for larger screens */
+        padding: 1.5rem; /* Slightly more padding */
+        gap: 2rem; /* Slightly larger gap */
+    }
+
+    .courses,
+    .general {
+        /* Tablet set width to 48%. This allows them to be side-by-side in a row. */
+        /* Desktop can maintain this or adjust if more items or different layout. */
+        /* Assuming they remain as part of a row in #pdf-div */
+        width: 45%; /* Slightly adjust if needed, to ensure they fit with larger gaps */
+        padding: 1rem; /* Increase padding from mobile's 0.5rem */
+    }
+
+    input[type='file'] {
+        /* Width 70% is already set by tablet, inherited from original global. This is fine. */
+        /* Add any other desktop-specific refinements if necessary */
+    }
+
+    #rname input {
+        /* Width 96% is already set by tablet, inherited from original global. This is fine. */
+    }
+
+    button {
+        /* Tablet: width: auto; padding: .5rem 1.5rem; font-size: 17px; */
+        /* Original global: padding: .5rem; font-size: 18px; */
+        font-size: 18px; /* Revert to original global font size */
+        padding: 0.6rem 1.8rem; /* Slightly larger padding for desktop */
+    }
+
+    img {
+        width: 100px; /* Original global width */
+    }
+
+    /* Timetable adjustments for Desktop */
+    .timetable-table {
+        /* Tablet styles for display, overflow, white-space are good. */
+        /* We can increase width if desired, e.g. if container is wider */
+        /* width: 80%; /* Example: if container is very wide, constrain table a bit */
+        /* margin: 2rem auto; /* Increase margin if desired */
+    }
+
+    .timetable-table th,
+    .timetable-table td {
+        /* Tablet: font-size: 0.9em; padding: 6px 8px; */
+        /* Original global: th padding 10px, td padding 8px 10px, td font-size 0.95em */
+        font-size: 1em; /* Slightly larger font for desktop */
+        padding: 10px 12px; /* More padding for desktop */
+    }
+
+    .timetable-table .day-header {
+        /* Tablet: font-size: 1em; padding: 8px (same as mobile) */
+        /* Original global: font-size: 1.1em; padding: 10px */
+        font-size: 1.1em;
+        padding: 10px;
     }
 }
