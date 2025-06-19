@@ -51,7 +51,7 @@ async function parsePDF(elementId) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         console.log(`Raw text items from page ${i} of ${file.name}: `, content.items);
-        text += content.items.map(item => item.str).join(' ');
+        text += content.items.map(item => item.str).join(' ') + '\n'; // MODIFIED LINE
     }
     console.log(`Full extracted text from ${file.name}: `, text);
     return text;
@@ -100,12 +100,35 @@ function processTimetable(text) {
 
 function processCourses(text) {
     console.log("Processing Courses with text: ", text);
-    const courseRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g;
-    const matches = text.match(courseRegex);
-    console.log("Courses regex matches: ", matches);
-    const processedCodes = [...new Set(matches)].map(code => code.replace(/\s+/g, ' ').trim());
-    console.log("Processed course codes: ", processedCodes);
-    return processedCodes;
+    const lines = text.split('
+');
+    const courses = [];
+    const lineWithCourseCodeRegex = /^s*d+s+([A-Z]{3,4}(?:/[A-Z]{3,4})?s+d{3,4})s+.*/;
+
+    lines.forEach(line => {
+        const match = line.match(lineWithCourseCodeRegex);
+        if (match && match[1]) {
+            courses.push(match[1].replace(/s+/g, ' ').trim());
+        }
+    });
+
+    const uniqueCourses = [...new Set(courses)];
+    console.log("Extracted course codes from student PDF (new logic): ", uniqueCourses);
+
+    if (uniqueCourses.length === 0) {
+        console.warn("New processCourses logic extracted 0 courses. Attempting fallback regex.");
+        const courseRegexFallback = /([A-Z]{3,4}(?:/[A-Z]{3,4})?sd{3,4})/g;
+        const fallbackMatches = text.match(courseRegexFallback);
+        if (fallbackMatches) {
+            const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/s+/g, ' ').trim());
+            console.log("Processed course codes (fallback regex): ", processedFallbackCodes);
+            return processedFallbackCodes;
+        } else {
+            console.log("Fallback regex in processCourses also found no matches.");
+            return [];
+        }
+    }
+    return uniqueCourses;
 }
 
 function normalizeTime(timeStr) {
