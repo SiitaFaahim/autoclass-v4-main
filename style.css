@@ -244,60 +244,73 @@ img {
 
 /* Timetable Styles */
 .timetable-table {
-    width: 100%; /* Or a specific max-width with auto margins */
-    margin: 1.5rem auto;
+    width: 100%;
+    max-width: 900px; /* Or your preferred max-width */
+    margin: 20px auto; /* Centering with top/bottom margin */
     border-collapse: collapse;
-    border: 1px solid #ddd; /* Light border for the table */
-    font-family: montserrat, helvetica; /* Ensure font inheritance */
+    font-family: 'Montserrat', sans-serif;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0; /* Light border for the table */
 }
 
-.timetable-table .day-header { /* Targeting the td with this class, as per JS */
-    background-color: #f0f0f0; /* Light grey background for day headers */
-    color: #333;
-    padding: 10px;
+.timetable-table .day-header {
+    background-color: #f0f2f5; /* Light grey, common for headers */
+    color: #333333; /* Dark grey text */
+    font-weight: 600; /* Bold */
+    padding: 12px 15px;
     text-align: center;
-    font-size: 1.1em;
-    font-weight: bold;
-    border-bottom: 2px solid #ccc;
+    font-size: 1.1em; /* Or 16px if base is 14px, adjust as needed */
+    border-bottom: 1px solid #d1d1d1; /* Slightly darker border than table's main border */
+    letter-spacing: 0.5px; /* Optional */
 }
 
 /* Styling for the cells containing Time, Course Code etc. headers */
 .timetable-table th {
-    background-color: #f7f7f7; /* Slightly different background for column headers */
-    color: #333;
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-weight: 600; /* Bolder than normal text */
+    background-color: #f8f9fa; /* Standard light grey for th */
+    color: #343a40;            /* Standard dark text color */
+    font-weight: 600;          /* Bold text */
+    padding: 10px 12px;        /* Padding for content */
+    text-align: left;          /* Align text to the left */
+    font-size: 1rem;           /* Standard font size (browser default or page default) */
+    border-bottom: 2px solid #dee2e6; /* Stronger bottom border for separation */
+    /* border-top: 1px solid #dee2e6; */ /* Optional: if needed for visual separation from day-header */
 }
 
 .timetable-table td {
-    padding: 8px 10px;
-    border: 1px solid #eee; /* Lighter border for individual cells */
+    padding: 9px 12px;
     text-align: left;
-    font-size: 0.95em;
+    font-size: 0.95rem; /* Assuming base font is 1rem or ~16px */
+    color: #495057;
+    border-bottom: 1px solid #e9ecef; /* Light line separating rows */
+    vertical-align: top; /* Good for consistency if cell content height varies */
 }
 
 /* Zebra striping for rows in tbody for better readability (optional) */
 .timetable-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9;
+    background-color: #f8f9fa; /* A very light grey, often the same as th background or slightly lighter */
 }
 
 .timetable-table tbody tr:hover {
-    background-color: #f1f1f1; /* Highlight on hover */
+    background-color: #e9ecef; /* A light grey, slightly darker than zebra striping, or a subtle color highlight */
+    /* color: #000; */ /* Optionally change text color on hover if needed for contrast */
 }
 
 /* Ensure the table is responsive */
 @media screen and (max-width: 768px) {
-    .timetable-table th,
-    .timetable-table td {
-        font-size: 0.9em; /* Smaller font on smaller screens */
-        padding: 6px 8px;
+    .timetable-table .day-header { /* Matches the td with class .day-header */
+        padding: 10px 12px; /* Slightly reduced padding */
+        font-size: 1.05em;   /* Slightly reduced font size */
     }
 
-    .timetable-table .day-header {
-        font-size: 1em;
-        padding: 8px;
+    .timetable-table th {
+        padding: 8px 10px; /* Reduced padding */
+        font-size: 0.95rem; /* Slightly reduced font size */
+    }
+
+    .timetable-table td {
+        padding: 7px 10px;  /* Reduced padding */
+        font-size: 0.9rem;  /* Slightly reduced font size */
     }
 }
 
@@ -305,19 +318,29 @@ img {
     /* Potentially more aggressive styling for very small screens if needed,
        like stacking rows or horizontal scrolling.
        For now, just adjusting font and padding further. */
+
+    /* The .timetable-table display:block an overflow-x: auto rule is kept from the original new styles for small screen functionality */
     .timetable-table {
-        display: block; /* Allows horizontal scrolling if content overflows */
-        overflow-x: auto;
-        white-space: nowrap; /* Prevents text wrapping that might break layout */
+        display: block; /* Allows table to be treated as a block for overflow */
+        overflow-x: auto; /* Enables horizontal scrolling if content exceeds screen width */
+        white-space: nowrap; /* Prevents text within cells from wrapping, forcing scroll */
     }
-    .timetable-table th,
+
+    .timetable-table .day-header { /* Matches td.day-header */
+        padding: 8px 10px;
+        font-size: 1em; /* Or adjust as needed */
+        white-space: normal; /* Allow day header text to wrap if it's long */
+    }
+
+    .timetable-table th {
+        padding: 6px 8px;
+        font-size: 0.9rem; /* Further reduce if necessary */
+        white-space: normal; /* Allow column header text to wrap */
+    }
+
     .timetable-table td {
-        font-size: 0.85em;
-        padding: 5px;
-        white-space: normal; /* Allow wrapping inside cells again */
-    }
-    .timetable-table .day-header {
-       font-size: 0.95em;
-       white-space: normal;
+        padding: 6px 8px;
+        font-size: 0.85rem; /* Smallest, ensure still legible */
+        white-space: normal; /* Allow cell content to wrap */
     }
 }
