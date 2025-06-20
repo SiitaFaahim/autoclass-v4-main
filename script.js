@@ -58,50 +58,54 @@ async function parsePDF(elementId) {
 }
 
 function processTimetable(text) {
-    console.log("Processing Timetable with text: ", text);
+    console.log("Processing Timetable with text (refined day handling): ", text);
     const lines = text.split('\n');
     const courses = [];
     let currentDay = "Unknown";
 
-    const dayRegex = /^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)$/i;
-    // Current detailed regex (Group 1: Code, Group 2: Name, Group 3: Time, Group 4: Hall [optional])
+    const dayNames = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+
     const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-.:]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)(?:\s+([A-Za-z0-9\s\(\)\/-]+))?/i;
-    // Simpler regex (Group 1: Code, Group 2: Time) - for fallback
     const simpleCourseTimeRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+(?:Lec\s\d+\s)?(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)/i;
 
     lines.forEach(line => {
-        const dayMatch = line.trim().match(dayRegex);
-        if (dayMatch) {
-            currentDay = dayMatch[1].toUpperCase();
-            // console.log(`Identified day: ${currentDay}`); // Optional: reduce console noise
+        const trimmedLine = line.trim();
+        if (trimmedLine === "") return;
+
+        const upperTrimmedLine = trimmedLine.toUpperCase();
+
+        for (const dayName of dayNames) {
+            if (upperTrimmedLine.startsWith(dayName)) {
+                currentDay = dayName;
+                break;
+            }
+        }
+
+        let detailedMatch = trimmedLine.match(courseDetailRegex);
+        if (detailedMatch) {
+            courses.push({
+                day: currentDay,
+                code: detailedMatch[1].replace(/\s+/g, ' ').trim(),
+                name: detailedMatch[2].trim(),
+                time: normalizeTime(detailedMatch[3].trim()),
+                hall: detailedMatch[4] ? detailedMatch[4].trim() : 'N/A'
+            });
         } else {
-            let detailedMatch = line.match(courseDetailRegex);
-            if (detailedMatch) {
-                // console.log("Timetable detailedMatch: ", detailedMatch); // Optional
+            let simpleMatch = trimmedLine.match(simpleCourseTimeRegex);
+            if (simpleMatch) {
+                console.log(`Line matched by simpleCourseTimeRegex (detailed failed) for day ${currentDay}:`, trimmedLine);
                 courses.push({
                     day: currentDay,
-                    code: detailedMatch[1].replace(/\s+/g, ' ').trim(),
-                    name: detailedMatch[2].trim(),
-                    time: normalizeTime(detailedMatch[3].trim()),
-                    hall: detailedMatch[4] ? detailedMatch[4].trim() : 'N/A'
+                    code: simpleMatch[1].replace(/\s+/g, ' ').trim(),
+                    name: 'Details N/A',
+                    time: normalizeTime(simpleMatch[2].trim()),
+                    hall: 'N/A'
                 });
-            } else {
-                let simpleMatch = line.match(simpleCourseTimeRegex);
-                if (simpleMatch) {
-                    console.log("Line matched by simpleCourseTimeRegex (detailed failed):", line.trim());
-                    courses.push({
-                        day: currentDay,
-                        code: simpleMatch[1].replace(/\s+/g, ' ').trim(),
-                        name: 'Details N/A',
-                        time: normalizeTime(simpleMatch[2].trim()),
-                        hall: 'N/A'
-                    });
-                }
             }
         }
     });
 
-    console.log("Processed timetable entries (hybrid approach): ", courses);
+    console.log("Processed timetable entries (refined day handling): ", courses);
     return courses;
 }
 
