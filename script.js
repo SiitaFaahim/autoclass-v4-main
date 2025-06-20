@@ -51,7 +51,7 @@ async function parsePDF(elementId) {
         const page = await pdf.getPage(i);
         const content = await page.getTextContent();
         console.log(`Raw text items from page ${i} of ${file.name}: `, content.items);
-        text += content.items.map(item => item.str).join(' ') + '\n'; // MODIFIED LINE
+        text += content.items.map(item => item.str).join(' ') + '\n'; // Corrected newline
     }
     console.log(`Full extracted text from ${file.name}: `, text);
     return text;
@@ -59,42 +59,49 @@ async function parsePDF(elementId) {
 
 function processTimetable(text) {
     console.log("Processing Timetable with text: ", text);
-    const lines = text.split('\n'); // Split by newlines, assuming PDF text has them
+    const lines = text.split('\n');
     const courses = [];
-    let currentDay = "Unknown"; // Default day
+    let currentDay = "Unknown";
 
-    // Regex for Day of the Week (simple match)
     const dayRegex = /^(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)$/i;
-
-    // Regex for course details - this will need the most adjustment
-    // Example: SOE 322 Software Quality Engineering 10:00am-12:00pm NHA1
-    // Or: EEE 121 Circuit Theory I 2:00pm - 5:00pm CCT 2
-    // This regex attempts to capture these parts. It's complex and will likely need refinement.
-    const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)\s+([A-Za-z0-9\/-]+)/i;
-    // Groups: 1: Code, 2: Name, 3: Time, 4: Hall
-
+    // Current detailed regex (Group 1: Code, Group 2: Name, Group 3: Time, Group 4: Hall [optional])
+    const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-.:]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)(?:\s+([A-Za-z0-9\s\(\)\/-]+))?/i;
+    // Simpler regex (Group 1: Code, Group 2: Time) - for fallback
+    const simpleCourseTimeRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+(?:Lec\s\d+\s)?(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)/i;
 
     lines.forEach(line => {
         const dayMatch = line.trim().match(dayRegex);
         if (dayMatch) {
-            currentDay = dayMatch[1].toUpperCase(); // Standardize to uppercase
-            console.log(`Identified day: ${currentDay}`);
+            currentDay = dayMatch[1].toUpperCase();
+            // console.log(`Identified day: ${currentDay}`); // Optional: reduce console noise
         } else {
-            const courseMatch = line.match(courseDetailRegex);
-            if (courseMatch) {
-                console.log("Course regex match on line: ", line, courseMatch);
+            let detailedMatch = line.match(courseDetailRegex);
+            if (detailedMatch) {
+                // console.log("Timetable detailedMatch: ", detailedMatch); // Optional
                 courses.push({
                     day: currentDay,
-                    code: courseMatch[1].replace(/\s+/g, ' ').trim(),
-                    name: courseMatch[2].trim(), // This will likely grab too much or too little initially
-                    time: normalizeTime(courseMatch[3].trim()), // Assuming normalizeTime still works
-                    hall: courseMatch[4].trim()
+                    code: detailedMatch[1].replace(/\s+/g, ' ').trim(),
+                    name: detailedMatch[2].trim(),
+                    time: normalizeTime(detailedMatch[3].trim()),
+                    hall: detailedMatch[4] ? detailedMatch[4].trim() : 'N/A'
                 });
+            } else {
+                let simpleMatch = line.match(simpleCourseTimeRegex);
+                if (simpleMatch) {
+                    console.log("Line matched by simpleCourseTimeRegex (detailed failed):", line.trim());
+                    courses.push({
+                        day: currentDay,
+                        code: simpleMatch[1].replace(/\s+/g, ' ').trim(),
+                        name: 'Details N/A',
+                        time: normalizeTime(simpleMatch[2].trim()),
+                        hall: 'N/A'
+                    });
+                }
             }
         }
     });
 
-    console.log("Processed timetable entries (enhanced): ", courses);
+    console.log("Processed timetable entries (hybrid approach): ", courses);
     return courses;
 }
 
