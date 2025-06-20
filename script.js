@@ -100,20 +100,14 @@ function processTimetable(text) {
 
 function processCourses(text) {
     console.log("Processing Courses with text: ", text);
-    const courseRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g;
-    const matches = text.match(courseRegex);
-    console.log("Courses regex matches: ", matches);
-    const processedCodes = [...new Set(matches)].map(code => code.replace(/\s+/g, ' ').trim());
-    console.log("Processed course codes: ", processedCodes);
-    return processedCodes;
     const lines = text.split('\n'); // CORRECTED LINE
     const courses = [];
-    const lineWithCourseCodeRegex = /^s*d+s+([A-Z]{3,4}(?:/[A-Z]{3,4})?s+d{3,4})s+.*/;
+    const lineWithCourseCodeRegex = /^\s*\d+\s+([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})\s+.*/; // CORRECTED REGEX
 
     lines.forEach(line => {
         const match = line.match(lineWithCourseCodeRegex);
         if (match && match[1]) {
-            courses.push(match[1].replace(/s+/g, ' ').trim());
+            courses.push(match[1].replace(/\s+/g, ' ').trim()); // Corrected to use \s for consistency
         }
     });
 
@@ -122,10 +116,10 @@ function processCourses(text) {
 
     if (uniqueCourses.length === 0) {
         console.warn("New processCourses logic extracted 0 courses. Attempting fallback regex.");
-        const courseRegexFallback = /([A-Z]{3,4}(?:/[A-Z]{3,4})?sd{3,4})/g;
+        const courseRegexFallback = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g; // CORRECTED REGEX
         const fallbackMatches = text.match(courseRegexFallback);
         if (fallbackMatches) {
-            const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/s+/g, ' ').trim());
+            const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/\s+/g, ' ').trim()); // Corrected to use \s
             console.log("Processed course codes (fallback regex): ", processedFallbackCodes);
             return processedFallbackCodes;
         } else {
