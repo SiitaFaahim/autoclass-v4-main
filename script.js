@@ -99,31 +99,31 @@ function processTimetable(text) {
 }
 
 function processCourses(text) {
-    console.log("Processing Courses with text: ", text);
-    const lines = text.split('\n'); // CORRECTED LINE
+    console.log("Processing Courses with text (refined global search): ", text);
     const courses = [];
-    const lineWithCourseCodeRegex = /^\s*\d+\s+([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})\s+.*/; // CORRECTED REGEX
+    // Regex to find a number, whitespace, then capture the course code. Global flag 'g'.
+    // Capturing group 1: ([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})
+    const globalCourseCodeRegex = /\d+\s+([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})/g;
 
-    lines.forEach(line => {
-        const match = line.match(lineWithCourseCodeRegex);
-        if (match && match[1]) {
-            courses.push(match[1].replace(/\s+/g, ' ').trim()); // Corrected to use \s for consistency
-        }
-    });
+    let match;
+    while ((match = globalCourseCodeRegex.exec(text)) !== null) {
+        // match[1] is the captured course code
+        courses.push(match[1].replace(/\s+/g, ' ').trim());
+    }
 
     const uniqueCourses = [...new Set(courses)];
-    console.log("Extracted course codes from student PDF (new logic): ", uniqueCourses);
+    console.log("Extracted course codes from student PDF (refined global search): ", uniqueCourses);
 
     if (uniqueCourses.length === 0) {
-        console.warn("New processCourses logic extracted 0 courses. Attempting fallback regex.");
-        const courseRegexFallback = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g; // CORRECTED REGEX
+        console.warn("Refined global search extracted 0 courses. Attempting original fallback regex.");
+        const courseRegexFallback = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g; // This was already corrected
         const fallbackMatches = text.match(courseRegexFallback);
         if (fallbackMatches) {
-            const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/\s+/g, ' ').trim()); // Corrected to use \s
-            console.log("Processed course codes (fallback regex): ", processedFallbackCodes);
+            const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/\s+/g, ' ').trim());
+            console.log("Processed course codes (original fallback regex): ", processedFallbackCodes);
             return processedFallbackCodes;
         } else {
-            console.log("Fallback regex in processCourses also found no matches.");
+            console.log("Original fallback regex in processCourses also found no matches.");
             return [];
         }
     }
