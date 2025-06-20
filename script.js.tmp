@@ -2,7 +2,7 @@ async function processFiles() {
     try {
         const loading = document.getElementById('loading');
         loading.style.display = 'block';
-        
+
         const [timetableText, coursesText] = await Promise.all([
             parsePDF('timetable-pdf'),
             parsePDF('courses-pdf')
@@ -100,13 +100,8 @@ function processTimetable(text) {
 
 function processCourses(text) {
     console.log("Processing Courses with text: ", text);
-    const courseRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g;
-    const matches = text.match(courseRegex);
-    console.log("Courses regex matches: ", matches);
-    const processedCodes = [...new Set(matches)].map(code => code.replace(/\s+/g, ' ').trim());
-    console.log("Processed course codes: ", processedCodes);
-    return processedCodes;
-    const lines = text.split('\n'); // CORRECTED LINE
+    const lines = text.split('
+');
     const courses = [];
     const lineWithCourseCodeRegex = /^s*d+s+([A-Z]{3,4}(?:/[A-Z]{3,4})?s+d{3,4})s+.*/;
 
@@ -167,7 +162,7 @@ function normalizeTime(timeStr) {
         } else {
             hourStr = componentProcessed; // Assumed to be hour
         }
-        
+
         let hour = parseInt(hourStr);
 
         if (!ampm) { // Infer AM/PM if not specified
@@ -190,7 +185,7 @@ function normalizeTime(timeStr) {
                 else ampm = 'PM'; // Default for ambiguous like 6-7
             }
         }
-        
+
         let currentHour24 = hour;
         if (ampm === 'AM' && hour === 12) currentHour24 = 0; // Midnight case
         else if (ampm === 'PM' && hour < 12) currentHour24 += 12;
@@ -298,7 +293,7 @@ function matchCourses(timetable, courses) {
 async function generatePDF(courses) {
     const pdfDoc = await PDFLib.PDFDocument.create();
     const page = pdfDoc.addPage([600, 400]);
-    
+
     let yPos = 350;
     page.drawText("Personalized Timetable\n\n", { x: 50, y: yPos, size: 20 });
     yPos -= 30;
@@ -355,7 +350,7 @@ async function debugProcessPDFs() {
         const timetableText = await parsePDFArrayBuffer(timetableArrayBuffer, 'general time table.pdf');
         console.log("Parsing courses PDF...");
         const coursesText = await parsePDFArrayBuffer(coursesArrayBuffer, '300 st.pdf');
-        
+
         console.log("Processing timetable text (debug)...");
         const timetableData = processTimetable(timetableText); // Uses new processTimetable
         console.log("Processing courses text (debug)...");
@@ -404,7 +399,7 @@ async function parsePDFArrayBuffer(arrayBuffer, fileName) {
         const page = await pdf.getPage(i);
         console.log(`Getting text content for page ${i} of ${fileName}`);
         const content = await page.getTextContent();
-        // The logging for individual items is already in the main parsePDF, 
+        // The logging for individual items is already in the main parsePDF,
         // but we can add a summary here if needed.
         console.log(`Raw text items from page ${i} of ${fileName}: `, content.items);
         text += content.items.map(item => item.str).join(' ') + '\n'; // Add newline between pages
