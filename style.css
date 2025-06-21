@@ -25,44 +25,44 @@ body {
 }
 
 .container {
-    border: solid 1px #9c9c9c; 
-    background-color: #fefefefe; 
+    border: solid 1px #9c9c9c; /* Global style */
+    background-color: #fefefefe; /* Global style */
     width: 100%; /* Mobile first */
     margin: 1rem 0; /* Mobile: adjusted from 0 or 2rem auto */
     padding: 1rem; /* Mobile */
-    border-radius: 2px; 
+    border-radius: 2px; /* Global style */
     box-shadow: none; /* Mobile */
-    display: flex; 
-    flex-direction: column; 
+    display: flex; /* Global style */
+    flex-direction: column; /* Global style */
 }
 
 h1 {
-    text-align: center; 
+    text-align: center; /* Global style */
     font-size: 1.2rem; /* Mobile */
 }
 
 /* General label style from mobile, global label had larger font */
 label {
-    display: block; 
-    margin-bottom: 0.5rem; 
+    display: block; /* Global style */
+    margin-bottom: 0.5rem; /* Global style */
     font-size: 16px; /* Mobile */
     font-weight: 500; /* From global more specific label */
     text-align: center; /* From global more specific label */
 }
 
 #loading {
-    display: none; 
-    color: #666; 
-    margin-top: 1rem; 
+    display: none; /* Global style */
+    color: #666; /* Global style */
+    margin-top: 1rem; /* Global style */
 }
 
 #pdf-div {
-    border: dashed 2px #0e0e0e1f; 
-    padding: 0.5rem; /* Mobile */
+    border: solid 1px #cccccc; /* Updated border */
+    padding: 1rem; /* Increased padding */
     display: flex;
     flex-direction: column; /* Mobile */
     gap: 1rem; /* Mobile & Global had 1rem */
-    margin-bottom: 1rem; 
+    margin-bottom: 1rem; /* Global style */
     align-items: center; /* Mobile */
 }
 
@@ -76,6 +76,12 @@ label {
     justify-content: center; /* From global #pdf-div label */
     align-items: center; /* From global #pdf-div label */
     gap: 10px; /* From global #pdf-div label */
+    border: 1px dashed #adb5bd;
+    padding: 1.5rem 1rem;
+    background-color: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .courses,
@@ -86,122 +92,129 @@ label {
     text-align: justify;
     align-items: center;
     width: 100%; /* Changed from fit-content for better mobile full-width sections */
-    border-left: solid 3px rgba(255, 0, 0, 0.623); 
-    border-radius: 4px; 
-    gap: 1rem; 
-    padding: 0.5rem; /* Mobile (Global was .8rem) */
-    background-color: #f07d7d1e; 
+    border-left: solid 3px #6c757d; /* Neutral accent */
+    border-radius: 4px; /* Global style */
+    gap: 1rem; /* Global style */
+    padding: 1rem; /* Increased internal padding */
+    background-color: #f8f9fa; /* Light neutral background */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* For hover */
 }
 
 input[type='file'] {
-    display: flex; 
-    border: solid 1px #0e0e0e33; 
-    font-weight: 490; 
-    background-color: #fefefe63; 
-    font-style: italic; 
-    width: 100%;
-    height: fit-content; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    text-align: center; 
-    padding: 10px; 
+    display: flex; /* Global style */
+    border: none; /* Visually defer to label */
+    font-weight: 490; /* Global style */
+    background-color: transparent; /* Visually defer to label */
+    font-style: italic; /* Global style */
+    width: 100%; /* Mobile (Global was 70%) */
+    height: fit-content; /* Global style */
+    flex-direction: column; /* Global style */
+    justify-content: center; /* Global style */
+    align-items: center; /* Global style */
+    text-align: center; /* Global style */
+    padding: 0; /* Global style */
+    margin-top: 0.5rem; /* Space above file name text */
 }
 
 input[type='file']::-webkit-file-upload-button {
-    display: none; 
+    display: none; /* Global style */
 }
 
 #rename-div {
-    border: solid 1px rgba(77, 77, 77, 0.151); 
-    display: flex; 
-    background-color: #8a89890a; 
-    flex-direction: column; 
-    gap: 1rem; 
-    justify-content: center; 
-    padding: 1rem; 
+    border: solid 1px rgba(77, 77, 77, 0.151); /* Global style */
+    display: flex; /* Global style */
+    background-color: #8a89890a; /* Global style */
+    flex-direction: column; /* Global style */
+    gap: 1rem; /* Global style */
+    justify-content: center; /* Global style */
+    padding: 1rem; /* Global style */
 }
 
 #rname {
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
+    display: flex; /* Global style */
+    flex-direction: column; /* Global style */
+    justify-content: center; /* Global style */
+    align-items: center; /* Global style */
 }
 
 #rname input {
     width: 100%; /* Mobile (Global was 96%) */
-    padding: 10px; 
-    font-size: 16px; 
-    background-color: #fefefefe63; 
-    border: solid 1px #0e0e0e33; 
+    padding: 10px; /* Global style */
+    font-size: 16px; /* Global style */
+    background-color: #fefefefe63; /* Global style */
+    border: solid 1px #0e0e0e33; /* Global style */
 }
 
 button {
     width: 100%; /* Mobile */
     padding: 0.8rem; /* Mobile (Global was .5rem) */
     font-size: 16px; /* Mobile (Global was 18px) */
-    font-weight: 700; 
-    border-radius: 4px; 
-    border: 1px solid rgba(255, 0, 0, 0.623); 
-    color: #fff; 
-    background-color: rgba(255, 0, 0, 0.623); 
+    font-weight: 500; /* Global style */
+    border-radius: 4px; /* Global style */
+    border: 1px solid rgba(255, 0, 0, 0.623); /* Global style */
+    color: #fff; /* Global style */
+    background-color: rgba(255, 0, 0, 0.623); /* Global style */
 }
 
 img {
     width: 60px; /* Mobile (Global was 100px) */
-    height: auto; 
-    align-self: center; 
+    height: auto; /* Global style */
+    align-self: center; /* Global style */
 }
 
 /* Timetable Styles - Mobile First */
 .timetable-table {
-    width: 100%; 
-    margin: 1.5rem auto; 
-    border-collapse: collapse; 
-    border: 1px solid #ddd; 
-    font-family: montserrat, helvetica; /* Global style - already in * but keep for specificity if needed */
+    width: 100%; /* Global style */
+    margin: 1.5rem auto; /* Global style */
+    border-collapse: collapse; /* Global style */
+    border: 1px solid #dee2e6; /* Updated border */
+    box-shadow: 0 0 .35rem rgba(0,0,0,0.075); /* Added subtle shadow */
+    /* font-family is now in * selector */
     display: block; /* Mobile - for horizontal scrolling */
     overflow-x: auto; /* Mobile - for horizontal scrolling */
     white-space: nowrap; /* Mobile - prevent wrapping that breaks layout */
 }
 
 .timetable-table .day-header {
-    background-color: #f0f0f0; 
-    color: #333; 
+    background-color: #e9ecef; /* Updated bg */
+    color: #495057; /* Updated text color */
     padding: 8px; /* Mobile (Global was 10px, tablet was 8px) - taking smaller one for mobile */
-    text-align: center; 
+    text-align: center; /* Global style */
     font-size: 0.95em; /* Mobile (Global was 1.1em, tablet 1em) */
-    font-weight: bold; 
-    border-bottom: 2px solid #ccc; 
+    font-weight: bold; /* Global style */
+    border-bottom: 1px solid #dee2e6; /* Updated border */
     white-space: normal; /* Mobile - allow wrapping inside header */
 }
 
 .timetable-table th {
-    background-color: #f7f7f7; 
-    color: #333; 
+    background-color: #f8f9fa; /* Updated bg */
+    color: #495057; /* Updated text color */
     padding: 5px; /* Mobile (Global was 10px, tablet 6px 8px) */
-    text-align: left; 
-    border-bottom: 1px solid #ddd; 
-    font-weight: 600; 
+    text-align: left; /* Global style */
+    border-bottom: 1px solid #dee2e6; /* Updated border */
+    font-weight: 600; /* Global style */
     font-size: 0.85em; /* Mobile (Global was 0.95em, tablet 0.9em) */
     white-space: normal; /* Mobile - allow wrapping inside cells */
 }
 
 .timetable-table td {
     padding: 5px; /* Mobile (Global was 8px 10px, tablet 6px 8px) */
-    border: 1px solid #eee; 
-    text-align: left; 
+    border: 1px solid #e9ecef; /* Updated cell border */
+    text-align: left; /* Global style */
     font-size: 0.85em; /* Mobile (Global was 0.95em, tablet 0.9em) */
     white-space: normal; /* Mobile - allow wrapping inside cells */
 }
 
 .timetable-table tbody tr:nth-child(odd) {
-    background-color: #f9f9f9; 
+    background-color: #f9f9f9; /* Global style */
+}
+
+.timetable-table tbody tr {
+    transition: background-color 0.2s ease-in-out;
 }
 
 .timetable-table tbody tr:hover {
-    background-color: #f1f1f1; 
+    background-color: #e2e6ea; /* Updated hover bg */
 }
 
 /* End of base (mobile-first) styles */
@@ -364,4 +377,15 @@ img {
         font-size: 1.1em;
         padding: 10px;
     }
+}
+
+.courses:hover,
+.general:hover {
+    background-color: #e9ecef; /* Slightly darker on hover */
+    border-left-color: #495057; /* Darker accent on hover */
+}
+
+#pdf-div label:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
 }
