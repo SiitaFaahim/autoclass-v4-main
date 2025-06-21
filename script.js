@@ -65,8 +65,8 @@ function processTimetable(text) {
 
     const dayNames = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
 
-    const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-.:]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)(?:\s+([A-Za-z0-9\s\(\)\/-]+))?/gi; // Added 'g'
-    const simpleCourseTimeRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+(?:Lec\s\d+\s)?(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)/gi; // Added 'g'
+    const courseDetailRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+([A-Za-z0-9\s\(\)\-.:]+?)\s+(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)(?:\s+([A-Za-z0-9\s\(\)\/-]+))?/gi;
+    const simpleCourseTimeRegex = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})\s+(?:Lec\s\d+\s)?(\d{1,2}:\d{2}[ap]?m?\s*(?:-|to)\s*\d{1,2}:\d{2}[ap]?m?)/gi;
 
     lines.forEach(line => {
         const trimmedLine = line.trim();
@@ -82,7 +82,7 @@ function processTimetable(text) {
 
         let match;
         let foundWithDetailed = false;
-        courseDetailRegex.lastIndex = 0; // Reset lastIndex for global regex
+        courseDetailRegex.lastIndex = 0;
         while ((match = courseDetailRegex.exec(trimmedLine)) !== null) {
             foundWithDetailed = true;
             courses.push({
@@ -95,7 +95,7 @@ function processTimetable(text) {
         }
 
         if (!foundWithDetailed) {
-            simpleCourseTimeRegex.lastIndex = 0; // Reset lastIndex for global regex
+            simpleCourseTimeRegex.lastIndex = 0;
             while ((match = simpleCourseTimeRegex.exec(trimmedLine)) !== null) {
                 console.log(`Line snippet matched by simpleCourseTimeRegex (detailed failed) for day ${currentDay}:`, trimmedLine.substring(match.index, match.index + 60) + "...");
                 courses.push({
@@ -116,13 +116,10 @@ function processTimetable(text) {
 function processCourses(text) {
     console.log("Processing Courses with text (refined global search): ", text);
     const courses = [];
-    // Regex to find a number, whitespace, then capture the course code. Global flag 'g'.
-    // Capturing group 1: ([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})
     const globalCourseCodeRegex = /\d+\s+([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s+\d{3,4})/g;
 
     let match;
     while ((match = globalCourseCodeRegex.exec(text)) !== null) {
-        // match[1] is the captured course code
         courses.push(match[1].replace(/\s+/g, ' ').trim());
     }
 
@@ -131,7 +128,7 @@ function processCourses(text) {
 
     if (uniqueCourses.length === 0) {
         console.warn("Refined global search extracted 0 courses. Attempting original fallback regex.");
-        const courseRegexFallback = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g; // This was already corrected
+        const courseRegexFallback = /([A-Z]{3,4}(?:\/[A-Z]{3,4})?\s\d{3,4})/g;
         const fallbackMatches = text.match(courseRegexFallback);
         if (fallbackMatches) {
             const processedFallbackCodes = [...new Set(fallbackMatches)].map(code => code.replace(/\s+/g, ' ').trim());
@@ -182,26 +179,26 @@ function normalizeTime(timeStr) {
         if (!ampm) { // Infer AM/PM if not specified
             if (isEndTime && refStartAmPm) {
                 if (refStartAmPm === 'AM') {
-                    if (hour === 12) ampm = 'PM'; // e.g. 10 AM - 12 (PM)
-                    else if (refStartHour24 && hour < refStartHour24 && hour <= 6) ampm = 'PM'; // e.g. 10 AM - 1 (PM)
+                    if (hour === 12) ampm = 'PM';
+                    else if (refStartHour24 && hour < refStartHour24 && hour <= 6) ampm = 'PM';
                     else ampm = 'AM';
                 } else if (refStartAmPm === 'PM') {
-                    if (hour === 12) ampm = 'AM'; // e.g. 10 PM - 12 (AM, midnight)
-                    else if (refStartHour24 && hour < refStartHour24 && hour <= 6) ampm = 'AM'; // e.g. 10 PM - 1 (AM)
+                    if (hour === 12) ampm = 'AM';
+                    else if (refStartHour24 && hour < refStartHour24 && hour <= 6) ampm = 'AM';
                     else ampm = 'PM';
-                } else { // Should not happen if refStartAmPm is provided
+                } else {
                     ampm = (hour >= 7 && hour <= 11) ? 'AM' : 'PM';
                 }
-            } else { // For start time, or if end time has no reference
-                if (hour === 12) ampm = 'PM'; // 12 is PM unless specified as AM
+            } else {
+                if (hour === 12) ampm = 'PM';
                 else if (hour >= 7 && hour <= 11) ampm = 'AM';
                 else if (hour >= 1 && hour <= 6) ampm = 'PM';
-                else ampm = 'PM'; // Default for ambiguous like 6-7
+                else ampm = 'PM';
             }
         }
         
         let currentHour24 = hour;
-        if (ampm === 'AM' && hour === 12) currentHour24 = 0; // Midnight case
+        if (ampm === 'AM' && hour === 12) currentHour24 = 0;
         else if (ampm === 'PM' && hour < 12) currentHour24 += 12;
 
         return { hour: hour, minute: minuteStr, ampm: ampm, hour24: currentHour24, full: `${hour}:${minuteStr} ${ampm}` };
@@ -220,16 +217,16 @@ function normalizeTime(timeStr) {
 }
 
 function parseStartTimeForSorting(timeString) {
-    const startTimePart = timeString.split('-')[0].trim(); // "10:00 AM" or "2:30 PM"
+    const startTimePart = timeString.split('-')[0].trim();
     const timeMatch = startTimePart.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if (!timeMatch) return 0; // Should not happen with normalizedTime
+    if (!timeMatch) return 0;
 
     let hours = parseInt(timeMatch[1]);
     const minutes = parseInt(timeMatch[2]);
     const ampm = timeMatch[3].toUpperCase();
 
     if (ampm === 'PM' && hours < 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0; // Midnight case
+    if (ampm === 'AM' && hours === 12) hours = 0;
 
     return hours * 60 + minutes;
 }
@@ -252,37 +249,36 @@ function groupCoursesByDay(matchedCourses) {
 
 function displayTimetableAsHTML(groupedCourses) {
     const displayDiv = document.getElementById('timetable-display');
-    displayDiv.innerHTML = ''; // Clear previous content
+    displayDiv.innerHTML = '';
     const table = document.createElement('table');
     table.classList.add('timetable-table');
+
+    const mainThead = table.createTHead();
+    const headerRow = mainThead.insertRow();
+    ['Course Code', 'Time', 'Lecturer Name'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+    });
 
     const dayOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY", "Unknown"];
 
     dayOrder.forEach(day => {
         if (groupedCourses[day] && groupedCourses[day].length > 0) {
-            const dayHead = table.createTHead(); // Create a new thead for each day section
-            const dayRow = dayHead.insertRow();
-            const dayCell = dayRow.insertCell();
-            dayCell.colSpan = 3; // Updated colspan from 4 to 3
+            const dayTbody = table.appendChild(document.createElement('tbody'));
+
+            const dayHeaderRow = dayTbody.insertRow();
+            const dayCell = dayHeaderRow.insertCell();
+            dayCell.colSpan = 3;
             dayCell.textContent = day;
             dayCell.classList.add('day-header');
 
-            const headerRow = dayHead.insertRow(); // Header for course details
-            ['Course Code', 'Time', 'Lecturer Name'].forEach(text => {
-                const th = document.createElement('th');
-                th.textContent = text;
-                headerRow.appendChild(th);
-            });
-
-            const tbody = document.createElement('tbody');
             groupedCourses[day].forEach(course => {
-                const row = tbody.insertRow();
+                const row = dayTbody.insertRow();
                 row.insertCell().textContent = course.code;
                 row.insertCell().textContent = course.time;
-                // row.insertCell().textContent = course.name; // This line removed
                 row.insertCell().textContent = course.hall;
             });
-            table.appendChild(tbody);
         }
     });
 
@@ -356,17 +352,13 @@ async function debugProcessPDFs() {
         const coursesArrayBuffer = await coursesResponse.arrayBuffer();
         console.log("Courses PDF fetched successfully.");
 
-        // Temporarily adapt parsePDF to take ArrayBuffer directly for debugging
-        // Or, more robustly, make parsePDF flexible, which is harder for a subtask.
-        // For this subtask, we'll simulate file objects for parsePDF.
-
         console.log("Parsing timetable PDF...");
         const timetableText = await parsePDFArrayBuffer(timetableArrayBuffer, 'general time table.pdf');
         console.log("Parsing courses PDF...");
         const coursesText = await parsePDFArrayBuffer(coursesArrayBuffer, '300 st.pdf');
         
         console.log("Processing timetable text (debug)...");
-        const timetableData = processTimetable(timetableText); // Uses new processTimetable
+        const timetableData = processTimetable(timetableText);
         console.log("Processing courses text (debug)...");
         const coursesData = processCourses(coursesText);
 
@@ -377,9 +369,9 @@ async function debugProcessPDFs() {
             console.warn("Debug: No matching courses found from sample PDFs.");
             alert("Debug: No matching courses found. Check console for details on extracted data.");
             const displayDiv = document.getElementById('timetable-display');
-            if (displayDiv) displayDiv.innerHTML = ''; // Clear old table
-            loading.style.display = 'none'; // Hide loading
-            return; // Exit if no courses
+            if (displayDiv) displayDiv.innerHTML = '';
+            loading.style.display = 'none';
+            return;
         }
         console.log("Debug: Matched courses found: ", matchedCourses);
 
@@ -388,10 +380,6 @@ async function debugProcessPDFs() {
 
         displayTimetableAsHTML(groupedCourses);
         alert("Debug: HTML Timetable processing complete. Check the page and console for detailed logs.");
-
-        // PDF generation and download are removed as per requirements
-        // const pdfBytes = await generatePDF(matchedCourses);
-        // downloadPDF(pdfBytes, "DebugTimetable");
 
     } catch (error) {
         alert(`Debug Error: ${error.message}`);
@@ -413,10 +401,8 @@ async function parsePDFArrayBuffer(arrayBuffer, fileName) {
         const page = await pdf.getPage(i);
         console.log(`Getting text content for page ${i} of ${fileName}`);
         const content = await page.getTextContent();
-        // The logging for individual items is already in the main parsePDF, 
-        // but we can add a summary here if needed.
         console.log(`Raw text items from page ${i} of ${fileName}: `, content.items);
-        text += content.items.map(item => item.str).join(' ') + '\n'; // Add newline between pages
+        text += content.items.map(item => item.str).join(' ') + '\n';
     }
     console.log(`Full extracted text from ${fileName} (ArrayBuffer): `, text);
     return text;
