@@ -268,7 +268,7 @@ function displayTimetableAsHTML(groupedCourses) {
             dayCell.classList.add('day-header');
 
             const headerRow = dayHead.insertRow(); // Header for course details
-            ['Time', 'Course Code', 'Lecturer Name'].forEach(text => {
+            ['Course Code', 'Time', 'Lecturer Name'].forEach(text => {
                 const th = document.createElement('th');
                 th.textContent = text;
                 headerRow.appendChild(th);
@@ -277,8 +277,8 @@ function displayTimetableAsHTML(groupedCourses) {
             const tbody = document.createElement('tbody');
             groupedCourses[day].forEach(course => {
                 const row = tbody.insertRow();
-                row.insertCell().textContent = course.time;
                 row.insertCell().textContent = course.code;
+                row.insertCell().textContent = course.time;
                 // row.insertCell().textContent = course.name; // This line removed
                 row.insertCell().textContent = course.hall;
             });
