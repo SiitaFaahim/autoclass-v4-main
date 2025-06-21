@@ -1,7 +1,12 @@
+// Global variable to store grouped courses for PDF generation
+let currentGroupedCourses = null;
+
 async function processFiles() {
     try {
         const loading = document.getElementById('loading');
         loading.style.display = 'block';
+        const downloadBtn = document.getElementById('download-pdf-button');
+        downloadBtn.style.display = 'none'; // Hide button initially or on new generation
         
         const [timetableText, coursesText] = await Promise.all([
             parsePDF('timetable-pdf'),
@@ -16,19 +21,21 @@ async function processFiles() {
             alert("No matching courses found. Please check your input files or the console for details on extracted data.");
             const displayDiv = document.getElementById('timetable-display');
             if (displayDiv) displayDiv.innerHTML = ''; // Clear old table
+            currentGroupedCourses = null; // Clear stored data
             loading.style.display = 'none'; // Hide loading
             return; // Exit if no courses
         }
 
         const groupedCourses = groupCoursesByDay(matchedCourses);
-        displayTimetableAsHTML(groupedCourses); // New function to display HTML
+        currentGroupedCourses = groupedCourses; // Store for PDF generation
+        displayTimetableAsHTML(groupedCourses); // Display HTML table
 
-        // PDF generation and download are removed as per requirements
-        // const pdfBytes = await generatePDF(matchedCourses);
-        // downloadPDF(pdfBytes, document.getElementById('filename').value);
+        downloadBtn.style.display = 'block'; // Show download button
     } catch (error) {
         alert(`Error: ${error.message}`);
         console.error(error);
+        currentGroupedCourses = null; // Clear stored data on error
+        document.getElementById('download-pdf-button').style.display = 'none'; // Hide button on error
     } finally {
         loading.style.display = 'none';
     }
@@ -320,6 +327,76 @@ async function generatePDF(courses) {
     return await pdfDoc.save();
 }
 
+// Updated generatePDF function
+async function generatePDF(groupedCoursesData) {
+    const { PDFDocument, rgb, StandardFonts } = PDFLib;
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([600, 840]); // Standard A4 portrait-like height
+    const { width, height } = page.getSize();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    let yPos = height - 50;
+    const xMargin = 50;
+    const lineHeight = 18;
+    const titleFontSize = 18;
+    const dayFontSize = 14;
+    const courseFontSize = 10;
+
+    // Title
+    const timetableName = document.getElementById('filename').value || "My Timetable";
+    page.drawText(timetableName, {
+        x: xMargin,
+        y: yPos,
+        font: boldFont,
+        size: titleFontSize,
+        color: rgb(0, 0, 0)
+    });
+    yPos -= (titleFontSize + 10);
+
+    const dayOrder = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY", "Unknown"];
+
+    for (const day of dayOrder) {
+        if (groupedCoursesData[day] && groupedCoursesData[day].length > 0) {
+            if (yPos < 80) { // Check for new page
+                page = pdfDoc.addPage([600, 840]);
+                yPos = height - 50;
+            }
+
+            // Day Header
+            page.drawText(day, {
+                x: xMargin,
+                y: yPos,
+                font: boldFont,
+                size: dayFontSize,
+                color: rgb(0.1, 0.1, 0.1)
+            });
+            yPos -= (dayFontSize + 5);
+
+            groupedCoursesData[day].forEach(course => {
+                if (yPos < 60) { // Check for new page before drawing course
+                    page = pdfDoc.addPage([600, 840]);
+                    yPos = height - 50;
+                     // Optional: Re-draw day header if course spills to new page and is first item
+                    page.drawText(day + " (cont.)", { x: xMargin, y: yPos, font: boldFont, size: dayFontSize, color: rgb(0.1,0.1,0.1) });
+                    yPos -= (dayFontSize + 5);
+                }
+                const courseText = `${course.code}  |  ${course.time}  |  ${course.hall || 'N/A'} (${course.name || 'N/A'})`;
+                page.drawText(courseText, {
+                    x: xMargin + 10,
+                    y: yPos,
+                    font: font,
+                    size: courseFontSize,
+                    color: rgb(0.2, 0.2, 0.2)
+                });
+                yPos -= lineHeight;
+            });
+            yPos -= 10; // Extra space after a day's courses
+        }
+    }
+    return await pdfDoc.save();
+}
+
 function downloadPDF(bytes, filename) {
     const blob = new Blob([bytes], { type: 'application/pdf' });
     const link = document.createElement('a');
@@ -329,6 +406,36 @@ function downloadPDF(bytes, filename) {
     link.click();
     document.body.removeChild(link);
 }
+
+// Event listener for the download button
+document.addEventListener('DOMContentLoaded', () => {
+    const downloadBtn = document.getElementById('download-pdf-button');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', async () => {
+            if (!currentGroupedCourses) {
+                alert("No timetable data available to download. Please generate a timetable first.");
+                return;
+            }
+            const filename = document.getElementById('filename').value || "MyTimetable";
+
+            // Show some visual feedback, e.g., disable button and change text
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = 'Generating PDF...';
+
+            try {
+                const pdfBytes = await generatePDF(currentGroupedCourses);
+                downloadPDF(pdfBytes, filename);
+            } catch (error) {
+                console.error("Error generating or downloading PDF:", error);
+                alert("Failed to generate PDF. See console for details.");
+            } finally {
+                // Restore button state
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = 'Download Timetable as PDF';
+            }
+        });
+    }
+});
 
 async function debugProcessPDFs() {
     const loading = document.getElementById('loading');
