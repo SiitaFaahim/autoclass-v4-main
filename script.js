@@ -263,12 +263,12 @@ function displayTimetableAsHTML(groupedCourses) {
             const dayHead = table.createTHead(); // Create a new thead for each day section
             const dayRow = dayHead.insertRow();
             const dayCell = dayRow.insertCell();
-            dayCell.colSpan = 4; // Span across all columns
+            dayCell.colSpan = 3; // Updated colspan from 4 to 3
             dayCell.textContent = day;
             dayCell.classList.add('day-header');
 
             const headerRow = dayHead.insertRow(); // Header for course details
-            ['Time', 'Course Code', 'Course Name', 'Lecture Hall'].forEach(text => {
+            ['Time', 'Course Code', 'Lecturer Name'].forEach(text => {
                 const th = document.createElement('th');
                 th.textContent = text;
                 headerRow.appendChild(th);
@@ -279,7 +279,7 @@ function displayTimetableAsHTML(groupedCourses) {
                 const row = tbody.insertRow();
                 row.insertCell().textContent = course.time;
                 row.insertCell().textContent = course.code;
-                row.insertCell().textContent = course.name;
+                // row.insertCell().textContent = course.name; // This line removed
                 row.insertCell().textContent = course.hall;
             });
             table.appendChild(tbody);
