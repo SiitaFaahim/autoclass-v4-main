@@ -92,7 +92,7 @@ label {
     text-align: justify;
     align-items: center;
     width: 100%; /* Changed from fit-content for better mobile full-width sections */
-    border-left: solid 3px rgba(255, 0, 0, 0.623); /* Neutral accent */
+    border-left: solid 3px #6c757d; /* Neutral accent */
     border-radius: 4px; /* Global style */
     gap: 1rem; /* Global style */
     padding: 1rem; /* Increased internal padding */
@@ -388,4 +388,39 @@ img {
 #pdf-div label:hover {
     background-color: #f8f9fa;
     border-color: #007bff;
+}
+
+
+/* Loading Bar Styles */
+#loading {
+    /* display: none; is handled by inline style for JS toggle */
+    /* color: #666; /* No longer needed as text is removed */ */
+    /* margin-top: 1rem; /* This can be kept or adjusted */
+    width: 100%; /* Ensure it takes width for the bar container */
+}
+
+.loading-bar-container {
+    width: 100%;
+    height: 8px; /* Slightly thinner bar */
+    background-color: #e0e0e0; /* Track color */
+    border-radius: 4px;
+    overflow: hidden; /* Important for the animation */
+    margin-top: 0.5rem; /* Consistent with other small margins */
+}
+
+.loading-bar-progress {
+    width: 50%; /* Width of the animated bar segment */
+    height: 100%;
+    background-color: rgb(255, 0, 0); /* Solid red from button */
+    border-radius: 4px;
+    animation: indeterminate-loading-animation 1.5s infinite linear;
+}
+
+@keyframes indeterminate-loading-animation {
+    0% {
+        transform: translateX(-100%); /* Start off-screen to the left */
+    }
+    100% {
+        transform: translateX(200%); /* Move across container (100% / 50% width = 2 => 200%) */
+    }
 }
