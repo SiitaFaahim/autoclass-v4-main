@@ -154,6 +154,31 @@ button {
     border: 1px solid rgba(255, 0, 0, 0.623); /* Global style */
     color: #fff; /* Global style */
     background-color: rgba(255, 0, 0, 0.623); /* Global style */
+    cursor: pointer; /* Add cursor pointer to all buttons */
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Add transition */
+}
+
+button:hover {
+    background-color: rgba(220, 0, 0, 0.75); /* Darken button on hover */
+    border-color: rgba(200, 0, 0, 0.85);
+}
+
+button:disabled {
+    background-color: #cccccc;
+    border-color: #bbbbbb;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+
+/* Style for the new download button */
+#download-pdf-button {
+    margin-top: 1rem; /* Add some space above the button */
+    /* It will inherit other button styles automatically */
+    /* If specific styling is needed, it can be added here */
+    /* For example, a different color: */
+    /* background-color: #007bff; */
+    /* border-color: #0056b3; */
 }
 
 img {
