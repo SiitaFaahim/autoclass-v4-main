@@ -92,7 +92,7 @@ label {
     text-align: justify;
     align-items: center;
     width: 100%; /* Changed from fit-content for better mobile full-width sections */
-    border-left: solid 3px #6c757d; /* Neutral accent */
+    border-left: solid 3px rgba(255, 0, 0, 0.623); /* Updated to button red */
     border-radius: 4px; /* Global style */
     gap: 1rem; /* Global style */
     padding: 1rem; /* Increased internal padding */
@@ -382,7 +382,7 @@ img {
 .courses:hover,
 .general:hover {
     background-color: #e9ecef; /* Slightly darker on hover */
-    border-left-color: #495057; /* Darker accent on hover */
+    border-left-color: rgba(255, 0, 0, 0.85); /* Updated hover to button red (darker/more opaque) */
 }
 
 #pdf-div label:hover {
